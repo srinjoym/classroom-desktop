@@ -32,6 +32,8 @@ describe("submissionClone", () => {
     cloneDestination: "/some/clone/path"
   }
 
+  const mockClonePath = "/tmp/" + (Math.random().toString(36) + "00000").substr(2, 5)
+
   beforeEach(() => {
     dispatch = sinon.spy()
     sinon.stub(keytar, "findPassword").returns(ACCESS_TOKEN)
@@ -81,14 +83,14 @@ describe("submissionClone", () => {
 
     it("dispatches an action to set the clone path of a submission", async () => {
       const submissionClone = submissionCloneFunc(clone)
-      await submissionClone(mockSubmission)(dispatch, getState)
+      await submissionClone(mockSubmission, mockClonePath)(dispatch, getState)
 
       expect(dispatch.calledWithMatch({ type: "SUBMISSION_SET_CLONE_PATH", id: 1 })).is.true
     })
 
     it("dispatches an action to set the clone status of a submission", async () => {
       const submissionClone = submissionCloneFunc(clone)
-      await submissionClone(mockSubmission)(dispatch, getState)
+      await submissionClone(mockSubmission, mockClonePath)(dispatch, getState)
 
       expect(dispatch.calledWithMatch({ type: "SUBMISSION_SET_CLONE_STATUS", id: 1 })).is.true
     })
@@ -99,7 +101,7 @@ describe("submissionClone", () => {
       })
 
       const submissionClone = submissionCloneFunc(cloneMock)
-      await submissionClone(mockSubmission)(dispatch, getState)
+      await submissionClone(mockSubmission, mockClonePath)(dispatch, getState)
 
       // ignoring the second argument because we no longer mock the current Date
       expect(cloneMock.calledWithMatch("https://github.com/test-org/test-assignment")).is.true
@@ -107,7 +109,7 @@ describe("submissionClone", () => {
 
     it("dispatches an action to update the clone status when an error occurs", async () => {
       const submissionClone = submissionCloneFunc(clone)
-      await submissionClone(mockSubmission)(dispatch, getState)
+      await submissionClone(mockSubmission, mockClonePath)(dispatch, getState)
 
       expect(dispatch.calledWithMatch({ type: "SUBMISSION_SET_CLONE_STATUS", id: 1, cloneStatus: "Clone failed: an error has occured." })).is.true
     })
@@ -123,7 +125,7 @@ describe("submissionClone", () => {
       }
 
       const submissionClone = submissionCloneFunc(cloneMock)
-      await submissionClone(mockSubmission)(dispatch, getState)
+      await submissionClone(mockSubmission, mockClonePath)(dispatch, getState)
 
       expect(dispatch.calledWithMatch({ type: "SUBMISSION_SET_CLONE_PROGRESS", id: 1, cloneProgress: 0 })).is.true
       expect(dispatch.calledWithMatch({ type: "SUBMISSION_SET_CLONE_PROGRESS", id: 1, cloneProgress: 30 })).is.true

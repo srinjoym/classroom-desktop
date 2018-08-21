@@ -1,6 +1,5 @@
 import axios from "axios"
-import { name, url, all } from "../../assignment/selectors"
-import { cloneDestination } from "../../settings/selectors"
+import { url, all } from "../../assignment/selectors"
 
 import { submissionSetCloneProgress } from "./submission-set-clone-progress"
 import { submissionSetClonePath } from "./submission-set-clone-path"
@@ -14,11 +13,9 @@ const keytar = require("keytar")
 // wraps around "clone" from "clone-utils" and dispatches actions to update
 // progress/display errors in the UI
 
-export const submissionCloneFunc = (clone) => {
-  return (submissionProps) => {
+export function submissionCloneFunc (clone) {
+  return (submissionProps, cloneDirectory) => {
     return async (dispatch, getState) => {
-      const submissionsBaseDirectory = cloneDestination(getState())
-      const assignmentName = name(getState())
       const submissionAuthorUsername = submissionProps.username
 
       // Sets to null if password cannot be found
@@ -26,11 +23,7 @@ export const submissionCloneFunc = (clone) => {
       // fails
       const accessToken = await keytar.findPassword("Classroom-Desktop")
 
-      const destination = getClonePath(
-        submissionsBaseDirectory,
-        assignmentName,
-        submissionAuthorUsername
-      )
+      const destination = await getClonePath(cloneDirectory, submissionAuthorUsername)
 
       dispatch(submissionSetClonePath(submissionProps.id, destination))
       dispatch(submissionSetCloneStatus(submissionProps.id, "Cloning Submission..."))

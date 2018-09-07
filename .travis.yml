@@ -57,6 +57,9 @@ script:
   - ./script/test
   - npm run make
 
+before_deploy:
+  - ./script/setup-macos-keychain
+
 deploy:
   skip_cleanup: true
   provider: releases

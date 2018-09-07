@@ -58,7 +58,7 @@ script:
   - npm run make
 
 before_deploy:
-  - ./script/setup-macos-keychain
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./script/setup-macos-keychain; fi
 
 deploy:
   skip_cleanup: true

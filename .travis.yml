@@ -52,13 +52,11 @@ before_script:
       dbus-launch /usr/bin/python -c \
         "import gnomekeyring;gnomekeyring.create_sync('login', '');"
     fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./script/setup-macos-keychain; fi
 
 script:
   - ./script/test
   - npm run make
-
-before_deploy:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./script/setup-macos-keychain; fi
 
 deploy:
   skip_cleanup: true

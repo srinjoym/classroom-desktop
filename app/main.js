@@ -32,10 +32,10 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
   }
 
-  if (!isDev) {
-    const msBetweenUpdates = 1000 * 60 * 30
-    updater.start(app, msBetweenUpdates)
-  }
+  // if (!isDev) {
+  //   const msBetweenUpdates = 1000 * 60 * 30
+  //   updater.start(app, msBetweenUpdates)
+  // }
 
   mainWindow.on("closed", function () {
     mainWindow = null

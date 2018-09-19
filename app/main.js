@@ -3,7 +3,7 @@ const electron = require("electron")
 const {app, BrowserWindow, ipcMain} = electron
 const isDev = require("electron-is-dev")
 const { URL } = require("url")
-// const updater = require("./updater")
+const updater = require("./updater")
 const logger = require("./logger")
 
 const {authorizeUser, setAccessTokenFromCode, loadAccessToken, deleteAccessToken} = require("./userAuthentication")
@@ -32,10 +32,10 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
   }
 
-  // if (!isDev) {
-  //   const msBetweenUpdates = 1000 * 60 * 30
-  //   updater.start(app, msBetweenUpdates)
-  // }
+  if (!isDev) {
+    const msBetweenUpdates = 1000 * 60 * 30
+    updater.start(app, msBetweenUpdates)
+  }
 
   mainWindow.on("closed", function () {
     mainWindow = null

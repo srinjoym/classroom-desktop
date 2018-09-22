@@ -44,6 +44,16 @@ addons:
 install:
   - npm install --prune
 
+stages:
+  - name: test
+    os: mac
+    os: linux
+    env: CC=clang CXX=clang++ npm_config_clang=1
+     compiler: clang
+  - predeploy
+    if: os = mac AND fork = false AND tag = ^v[0-9].[0-9].[0-9].*$
+  - deploy
+    if: tag = ^v[0-9].[0-9].[0-9].*$
 jobs:
   include:
   - stage: test
@@ -51,12 +61,10 @@ jobs:
     script: "./script/test"
   - stage: predeploy
     name: "Setup Mac Keychain"
-    if: os = mac AND fork = false
     script: "./script/setup-macos-keychain"
   - stage: deploy
     name: "Build"
     script: "npm run make"
-    if: tag = ^v[0-9].[0-9].[0-9].*$
   - stage: deploy
     name: "Deploy to GitHub Releases"
     script: skip

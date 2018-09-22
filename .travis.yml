@@ -5,6 +5,10 @@ dist: trusty
 
 sudo: false
 
+os:
+  - mac
+  - linux
+
 language: node_js
 node_js:
   - "8.11.3"
@@ -37,16 +41,6 @@ addons:
 install:
   - npm install --prune
 
-stages:
-  - name: test
-    os: mac
-    os: linux
-    env: CC=clang CXX=clang++ npm_config_clang=1
-    compiler: clang
-  - name: predeploy
-    if: os = mac AND fork = false AND tag = ^v[0-9].[0-9].[0-9].*$
-  - name: deploy
-    if: tag = ^v[0-9].[0-9].[0-9].*$
 jobs:
   include:
   - stage: test
@@ -55,6 +49,7 @@ jobs:
   - stage: predeploy
     name: "Setup Mac Keychain"
     script: "./script/setup-macos-keychain"
+    if: os = mac AND fork = false AND tag = ^v[0-9].[0-9].[0-9].*$
   - stage: deploy
     name: "Build"
     script: "npm run make"

@@ -44,35 +44,31 @@ addons:
 install:
   - npm install --prune
 
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval $(echo -n "" | /usr/bin/gnome-keyring-daemon --login); fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval $(/usr/bin/gnome-keyring-daemon --components=secrets --start); fi
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      dbus-launch /usr/bin/python -c \
-        "import gnomekeyring;gnomekeyring.create_sync('login', '');"
-    fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash ./script/setup-macos-keychain; fi
-
-script:
-  - ./script/test
-  - npm run make
-
-deploy:
-  skip_cleanup: true
-  provider: releases
-  name: ${TRAVIS_TAG}
-  tag_name: ${TRAVIS_TAG}
-  draft: true
-  file_glob: true
-  api_key:
-    secure: ${GITHUB_TOKEN}
-  file:
-    - "out/make/**/*.zip"
-    - "out/make/**/*.rpm"
-    - "out/make/**/*.deb"
-  on:
-    all_branches: true
-    tags: true
-    #deploy only on tag matching semantic versioning format
-    condition: "$TRAVIS_TAG =~ ^v[0-9].[0-9].[0-9].*$"
+jobs:
+  include:
+  - stage: test
+    name: "Unit Tests"
+    script: "./script/test"
+  - stage: predeploy
+    name: "Setup Mac Keychain"
+    if: os = mac AND fork = false
+    script: "./script/setup-macos-keychain"
+  - stage: deploy
+    name: "Build"
+    script: "npm run make"
+    if: tag = ^v[0-9].[0-9].[0-9].*$
+  - name: "Deploy to GitHub Releases"
+    script: skip
+    deploy:
+      skip_cleanup: true
+      provider: releases
+      name: ${TRAVIS_TAG}
+      tag_name: ${TRAVIS_TAG}
+      draft: true
+      file_glob: true
+      api_key:
+        secure: ${GITHUB_TOKEN}
+      file:
+        - "out/make/**/*.zip"
+        - "out/make/**/*.rpm"
+        - "out/make/**/*.deb"

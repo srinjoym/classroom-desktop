@@ -57,7 +57,8 @@ jobs:
     name: "Build"
     script: "npm run make"
     if: tag = ^v[0-9].[0-9].[0-9].*$
-  - name: "Deploy to GitHub Releases"
+  - stage: deploy
+    name: "Deploy to GitHub Releases"
     script: skip
     deploy:
       skip_cleanup: true

@@ -43,8 +43,7 @@ install:
 
 jobs:
   include:
-  - name: "Unit Tests"
-    script: "./script/test"
+  - script: "./script/test"
   - stage: predeploy
     name: "Setup Mac Keychain"
     script: "./script/setup-macos-keychain"

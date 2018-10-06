@@ -34,12 +34,6 @@ addons:
       - rpm
       - zip
 
-os:
-  - osx
-  - linux
-
-install: npm install --prune
-
 before_script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" && ! -z "$KEY_LINK" ]]; then bash ./script/setup-macos-keychain; fi
 
@@ -57,7 +51,6 @@ jobs:
       compiler: clang
     - os: osx
     - stage: deploy
-      install: npm install --prune
       script: npm run make
       deploy:
         skip_cleanup: true

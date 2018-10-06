@@ -1,9 +1,9 @@
-import {settingsUpdateUserState} from "./settings-update-user-state"
-import {assignmentReset} from "../../assignment/actions/assignment-reset"
-import {submissionReset} from "../../submissions/actions/submission-reset"
-import {paginationReset} from "../../pagination/actions/pagination-reset"
+import { ipcRenderer } from "electron"
+import { push } from "react-router-redux"
 
-const keytar = require("keytar")
+import { settingsResetState } from "./settings-reset-state"
+import { settingsSetUsername } from "./settings-set-username"
+
 const {session} = require("electron").remote
 
 /**
@@ -13,15 +13,12 @@ const {session} = require("electron").remote
  * @return async thunk action which resolves once app has been reset
  */
 export const settingsLogoutUser = () => {
-  return dispatch => {
-    return new Promise(async (resolve) => {
-      await keytar.deletePassword("Classroom-Desktop", "token")
-      session.defaultSession.clearStorageData()
-      dispatch(settingsUpdateUserState())
-      dispatch(assignmentReset())
-      dispatch(submissionReset())
-      dispatch(paginationReset())
-      resolve()
-    })
+  return async dispatch => {
+    ipcRenderer.send("deleteToken")
+
+    session.fromPartition("auth:session").clearStorageData()
+    await dispatch(settingsSetUsername(null))
+    await dispatch(settingsResetState())
+    dispatch(push("/"))
   }
 }

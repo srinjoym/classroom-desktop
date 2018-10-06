@@ -20,6 +20,10 @@ class SelectPage extends Component {
       this.props.submissionReset()
       this.props.fetchAllPages(this.props.assignmentURL)
     }
+
+    const remote = require("electron").remote
+    const trackScreen = remote.getGlobal("trackScreen")
+    trackScreen("select")
   }
 
   render () {
@@ -29,8 +33,8 @@ class SelectPage extends Component {
         {this.props.fetching ? <LoadingPanel message="Loading Assignment Repositories"/> : <SelectableSubmissionList />}
         <NavFooter
           left={{
-            label: "Cancel",
-            route: "/",
+            label: "Back",
+            route: "/populate",
           }}
           right={{
             label: "Next: Choose Destination",

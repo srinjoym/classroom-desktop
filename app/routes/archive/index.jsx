@@ -1,19 +1,49 @@
 import React from "react"
-import LoadingAssignmentPanel from "./containers/LoadingAssignmentPanel"
+import PropTypes from "prop-types"
+import { connect } from "react-redux"
+import lifecycle from "react-pure-lifecycle"
+
+import AssignmentPanel from "../shared/containers/AssignmentPanel"
 import SubmissionArchivePanelList from "./containers/SubmissionArchivePanelList"
 import NavFooter from "../shared/components/NavFooter"
+import ArchiveProgressPanel from "./containers/ArchiveProgressPanel"
 
-const ArchivePage = () => (
+import { settingsResetState } from "../../modules/settings/actions/settings-reset-state"
+
+const methods = {
+  componentDidMount (props) {
+    const remote = require("electron").remote
+    const trackScreen = remote.getGlobal("trackScreen")
+
+    trackScreen("archive")
+  }
+}
+
+const ArchivePage = ({
+  quitApp
+}) => (
   <div>
-    <LoadingAssignmentPanel/>
+    <AssignmentPanel/>
+    <ArchiveProgressPanel/>
     <SubmissionArchivePanelList />
     <NavFooter
       left={{
-        label: "Quit",
-        route: "/"
+        label: "Cancel",
+        route: "/populate",
+        onClick: quitApp
       }}
     />
   </div>
 )
 
-export default ArchivePage
+const mapDispatchToProps = (dispatch) => ({
+  quitApp: () => {
+    dispatch(settingsResetState())
+  }
+})
+
+ArchivePage.propTypes = {
+  quitApp: PropTypes.func.isRequired,
+}
+
+export default lifecycle(methods)(connect(null, mapDispatchToProps)(ArchivePage))

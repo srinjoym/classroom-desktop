@@ -34,9 +34,6 @@ addons:
       - rpm
       - zip
 
-install:
-  - npm install --prune
-
 os:
   - osx
   - linux
@@ -49,8 +46,10 @@ stages:
 jobs:
   include:
     - stage: test
+      install: npm install --prune
       script: ./script/test
     - stage: deploy
+      install: npm install --prune
       script: npm run make
       deploy:
         skip_cleanup: true

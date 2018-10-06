@@ -52,7 +52,9 @@ jobs:
   include:
     - stage: deploy
       script: npm run make
-      os: osx
+      os:
+        - osx
+        - linux
       deploy:
         skip_cleanup: true
         provider: releases
@@ -64,17 +66,7 @@ jobs:
           secure: ${GITHUB_TOKEN}
         file:
           - "out/make/**/*.zip"
-    - script: npm run make
-      os: linux
-      deploy:
-        skip_cleanup: true
-        provider: releases
-        name: ${TRAVIS_TAG}
-        tag_name: ${TRAVIS_TAG}
-        draft: true
-        file_glob: true
-        api_key:
-          secure: ${GITHUB_TOKEN}
-        file:
           - "out/make/**/*.rpm"
           - "out/make/**/*.deb"
+        on:
+          all_branches: true

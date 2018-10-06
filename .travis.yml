@@ -42,16 +42,12 @@ os:
   - linux
 
 stages:
-  - name: setup
-    if: os = mac
   - test
   - name: deploy
     if: tag =~ /^v[0-9].[0-9].[0-9].*$/
 
 jobs:
   include:
-    - stage: setup
-      script: ./script/setup-macos-keychain
     - stage: test
       script: ./script/test
     - stage: deploy

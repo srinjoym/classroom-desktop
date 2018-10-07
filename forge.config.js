@@ -1,14 +1,18 @@
-const fs = require("fs")
-
-const devClientId = "e56ae4a7249b39454ea5"
-const devClientSecret = "c00b3a34ca123c1e0870007aec67e91d5618bc46"
+const fs = require("fs-extra")
 
 const s = JSON.stringify
 
 const appInfo = s({
-  client_id: process.env.CLASSROOM_DESKTOP_OAUTH_CLIENT_ID || devClientId,
-  client_secret: process.env.CLASSROOM_DESKTOP_OAUTH_CLIENT_SECRET || devClientSecret,
+  ga_id: process.env.GOOGLE_ANALYTICS_ID
 })
+
+function getWindowsCertificatePassword () {
+  if (process.env.KEY_PASSWORD) {
+    return process.env.KEY_PASSWORD
+  } else {
+    console.log("Skipping Windows Certificate Password")
+  }
+}
 
 module.exports = {
   // other config here
@@ -26,10 +30,12 @@ module.exports = {
   },
   electronPackagerConfig: {
     packageManager: "npm",
+    osxSign: true,
+    executableName: "classroom-assistant",
     icon: "./app/resources/icon.icns",
     protocols: [
       {
-        name: "Classroom Desktop",
+        name: "Classroom Assistant",
         schemes: [
           "x-github-classroom"
         ]
@@ -37,17 +43,37 @@ module.exports = {
     ]
   },
   electronWinstallerConfig: {
-    name: "classroom-desktop"
+    name: "classroom-assistant",
+    title: "classroom-assistant",
+    exe: "classroom-assistant.exe",
+    icon: "./app/resources/icon.ico",
+    setupIcon: "./app/resources/icon.ico",
+    loadingGif: "./app/resources/images/win32-installer-splash.gif",
+    certificateFile: "./script/windows-certificate.pfx",
+    certificatePassword: getWindowsCertificatePassword()
   },
-  electronInstallerDebian: {},
-  electronInstallerRedhat: {},
+  electronInstallerDebian: {
+    icon: "./app/resources/images/classroom-logo.png",
+    categories: [
+      "Education"
+    ],
+    homepage: "http://classroom.github.com/assistant"
+  },
+  electronInstallerRedhat: {
+    icon: "./app/resources/images/classroom-logo.png",
+    categories: [
+      "Education"
+    ],
+    homepage: "http://classroom.github.com/assistant"
+  },
   github_repository: {
-    owner: "",
-    name: ""
+    owner: "education",
+    name: "classroom-assistant"
   },
+  prerelease: true,
   windowsStoreConfig: {
     packageName: "",
-    name: "classroom-desktop"
+    name: "classroom-assistant"
   },
   hooks: {
     generateAssets: async () => {

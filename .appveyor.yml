@@ -26,20 +26,10 @@ test_script:
   - npm run test
 
 for:
-- branches:
+-
+  branches:
     only:
-     - /^v[0-9].[0-9].[0-9].*/
-  
-  deploy:
-    description: ''
-    provider: GitHub
-    auth_token:
-      secure: Qw9G7NiqHJZHtZ8tQTYzzEqYaLzDEkg4SV2rWKOac4gtNL4UBNGKCvjKQCOq7kM1 # your encrypted token from GitHub
-    artifact: /^deploy-.*/
-    draft: true
-    on:
-      branch: /^v[0-9].[0-9].[0-9].*/  # release from tags only
-      appveyor_repo_tag: true          # deploy on tag push only
+      - /^v[0-9].[0-9].[0-9].*/
 
   before_build:
     - ps: script\setup-windows-certificate.ps1
@@ -58,3 +48,14 @@ for:
       name: deploy-exe
     - path: out\make\**\RELEASES
       name: deploy-RELEASES
+
+  deploy:
+    description: ''
+    provider: GitHub
+    auth_token:
+      secure: Qw9G7NiqHJZHtZ8tQTYzzEqYaLzDEkg4SV2rWKOac4gtNL4UBNGKCvjKQCOq7kM1 # your encrypted token from GitHub
+    artifact: /^deploy-.*/
+    draft: true
+    on:
+      branch: /^v[0-9].[0-9].[0-9].*/  # release from tags only
+      appveyor_repo_tag: true          # deploy on tag push only
